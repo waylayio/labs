@@ -26,11 +26,6 @@ $(function() {
     });
 });
 
-var simulationData =[];
-var timerId = 0;
-var chartData = {};
-var myLineChart;
-var ctx;
 
 var enableSimulation = function(){
     $("#stopSimulation").prop('disabled', false);
@@ -68,10 +63,25 @@ var changeSettings = function(){
     $('#endpoint').replaceWith(enpointhtml);
 };
 
+$('#myChartPanel').mutate('height', function(e) {
+   $('#myChart').css('width', ($(window).width() - 100) +'px');
+   $('#myChart').css('height', '400px');   
+   var c = document.getElementById("myChart");
+   c.height = "400";
+   c.width = ($(window).width() - 100);
+});
+
+var simulationData =[];
+var timerId = 0;
+var chartData = {};
+var myLineChart;
+var ctx;
+
 $(document).ready(function(){ 
     $("#simulation").hide();
     $('#myChart').css('width', ($(window).width() - 100) +'px');
     $('#myChart').css('height', '400px');
+    $('#myChartPanel').hide();
     changeSettings();
     $("#pushDomain").click(function(e){
           e.preventDefault();
@@ -109,6 +119,7 @@ $(document).ready(function(){
 
     $("#startSimulation").click(function(e){
           e.preventDefault();
+          $('#myChartPanel').show();
           var resource = $('#resource').val();
           var domain = $('#domain').val();
           var key = $('#key').val();
@@ -171,6 +182,7 @@ $(document).ready(function(){
         e.preventDefault();
         clearInterval(timerId);
         disableSimulation();
+        $('#myChartPanel').hide();
     });
     $("#filename_json").change(function(e) {
         var ext = $("input#filename_json").val().split(".").pop().toLowerCase();
@@ -219,8 +231,8 @@ $(document).ready(function(){
                         highlightStroke: randomColorGeneator()
                     };
                 });
-                if($("#myChart").length > 0)
-                    ctx = $("#myChart").get(0).getContext("2d");
+                $('#myChartPanel').show();
+                ctx = $("#myChart").get(0).getContext("2d");
                 myLineChart = new Chart(ctx).Line(chartData);
                 var count = 0;
                 rows.forEach(function(row) {
