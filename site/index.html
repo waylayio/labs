@@ -99,11 +99,20 @@
                     <div>
                         <input style="width: 80%; margin-left:40px;margin-bottom: 5px;" type="text" id="resource" placeholder="testresource" name="resource" class="form-control" value="testresource"/>
                     </div>
-                    <br>
-                    <div>
-                        <label style="width: 90px;text-align: right;" for="filename_json">Load json:</label>
-                        <input style="display:inline" type="file" name="filename_json" id="filename_json">
+
+
+                    <div class="file-upload">
+				  <div class="file-select">
+                        <label class="file-select-button" id="fajlName2" for="filename_json">Load json:</label>
+                        <div class="file-select-name" id="noFile2">No file chosen...</div> 
+                        <input type="file" name="filename_json" id="filename_json">
+                        </span>
+                        </div>
                     </div>
+
+
+
+
                     <hr>
                 </div>
                 <div id="measurementPanel">
@@ -131,9 +140,18 @@
                     </div>
 
                     <div>
-                        <label style="width: 90px;text-align: right;" for="filename_csv">Load csv:</label>
-                        <input style="display:inline" type="file" name="filename_csv" id="filename_csv">
+                    <div class="file-upload">
+				  <div class="file-select">
+                        <label class="file-select-button" id="fajlName" for="filename_csv">Load csv:</label>
+                        <div class="file-select-name" id="noFile">No file chosen...</div> 
+                        <input type="file" name="filename_csv" id="filename_csv">
+                        </span>
+                        </div>
                     </div>
+
+
+
+
                 </div>
 
                 <div id="simulation">
@@ -226,10 +244,13 @@
 
     <script src="js/events.min.js"></script>
     <script src="js/mutate.min.js"></script>
+ 
+
 
 
     <!-- Custom Theme JavaScript -->
     <script src="js/main.js"></script>
+
 
 </body>
 
