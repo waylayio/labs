@@ -92,6 +92,15 @@ hr.star-docs {
     text-align: center;
 }
 
+hr.star-dash {
+    margin: 35px auto 30px;
+    padding: 0;
+    max-width: 250px;
+    border: 0;
+    border-top: solid 5px;
+    text-align: center;
+}
+
 hr.star-video {
     margin: 35px auto 30px;
     padding: 0;
@@ -172,6 +181,16 @@ hr.star-video:after {
     font-size: 3em;
 }
 
+hr.star-dash:after {
+    content: "\f0e4";
+    display: inline-block;
+    position: relative;
+    top: -.8em;
+    padding: 0 .25em;
+    font-family: FontAwesome;
+    font-size: 3em;
+}
+
 hr.star-code:after {
     background-color: #fff;
 }
@@ -184,6 +203,10 @@ hr.star-docs:after {
     background-color: #fff;
 }
 
+hr.star-dash:after {
+    background-color: #fff;
+}
+
 hr.star-light {
     border-color: #fff;
 }
@@ -191,6 +214,7 @@ hr.star-light {
 hr.star-blue {
     border-color: #fff;
 }
+
 
 hr.star-light:after {
     color: #fff;
@@ -213,7 +237,7 @@ hr.star-blue:after {
 }
 
 hr.star-lab:after {
-    background-color: #fff;
+    background-color: #ECEFF1;
 }
 
 hr.star-primary {
@@ -224,6 +248,7 @@ hr.star-primary:after {
     color: #2c3e50;
     background-color: #fff;
 }
+
 
 .img-centered {
     margin: 0 auto;
