@@ -64,11 +64,11 @@ var changeSettings = function(){
 };
 
 $('#myChartPanel').mutate('height', function(e) {
-   $('#myChart').css('width', ($(window).width() - 100) +'px');
+   $('#myChart').css('width', ($(window).width()/2) +'px');
    $('#myChart').css('height', '400px');   
    var c = document.getElementById("myChart");
    c.height = "400";
-   c.width = ($(window).width() - 100);
+   c.width = ($(window).width()/2);
 });
 
 var simulationData =[];
@@ -79,7 +79,7 @@ var ctx;
 
 $(document).ready(function(){ 
     $("#simulation").hide();
-    $('#myChart').css('width', ($(window).width() - 100) +'px');
+    $('#myChart').css('width', ($(window).width()/2) +'px');
     $('#myChart').css('height', '400px');
     $('#myChartPanel').hide();
     changeSettings();
