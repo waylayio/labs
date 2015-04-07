@@ -78,6 +78,7 @@ var myLineChart;
 var ctx;
 
 $(document).ready(function(){ 
+    $('[data-toggle="tooltip"]').tooltip();
     $("#simulation").hide();
     $('#myChart').css('width', ($(window).width()/2) +'px');
     $('#myChart').css('height', '400px');
