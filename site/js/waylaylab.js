@@ -12,7 +12,7 @@ if (!window.WAYLAY) {
              data: JSON.stringify({parameter: value}),
              dataType: "json",
              success: function(data) {
-                console(data.message);
+                console.log(data.message);
               }, 
              error: function(jqXHR, textStatus, errorThrown) {
               console.log(jqXHR);
