@@ -64,8 +64,9 @@ var changeSettings = function(){
 };
 
 $('#myChartPanel').mutate('height', function(e) {
-   $('#myChart').css('width', ($(window).width()/2) +'px');
-   $('#myChart').css('height', '400px');   
+   $('#myChart')
+     .css('width', ($(window).width()/2) +'px')
+     .css('height', '400px');
    var c = document.getElementById("myChart");
    c.height = "400";
    c.width = ($(window).width()/2);
@@ -77,32 +78,53 @@ var chartData = {};
 var myLineChart;
 var ctx;
 
-$(document).ready(function(){ 
-    $('[data-toggle="tooltip"]').tooltip();
-    $("#simulation").hide();
-    $('#myChart').css('width', ($(window).width()/2) +'px');
-    $('#myChart').css('height', '400px');
-    $('#myChartPanel').hide();
-    changeSettings();
-    $("#pushDomain").click(function(e){
-          e.preventDefault();
-          var resource = $('#resource').val();
-          var data = JSON.parse($('#data').val());
-          var domain = $('#domain').val();
-          var key = $('#key').val();
-          var password = $('#secret').val();
-          if(key && password && domain){
-            WAYLAY.pushDomainData(domain, key, password, data, resource); 
-           } else {
-            WAYLAY.pushData(data, resource); 
-          }  
-    });
+$(document).ready(function(){
+  $('[data-toggle="tooltip"]').tooltip();
+  $("#simulation").hide();
+  $('#myChart')
+    .css('width', ($(window).width()/2) +'px')
+    .css('height', '400px');
+  $('#myChartPanel').hide();
 
-    $('#toggleHeader').click(function(e) {
-        e.preventDefault();
-        $('.toggleHeader').slideToggle('fast');
-        return false;
-    });
+  changeSettings();
+
+  var clearMessages = function(){
+    $("#error").text("");
+    $("#info").text("");
+  };
+
+  var errorHandler = function(error){
+    $("#error").text(error);
+  };
+
+  var successHandler = function(info){
+    $("#info").text(info);
+  };
+
+  $("#pushDomain").click(function(e){
+    clearMessages();
+    e.preventDefault();
+    var resource = $('#resource').val();
+    try {
+      var data = JSON.parse($('#data').val());
+      var domain = $('#domain').val();
+      var key = $('#key').val();
+      var password = $('#secret').val();
+      if (domain) {
+        WAYLAY.pushDomainData(domain, key, password, data, resource, successHandler, errorHandler);
+      } else {
+        WAYLAY.pushData(data, resource, successHandler, errorHandler);
+      }
+    }catch(e){
+      errorHandler(e.message);
+    }
+  });
+
+  $('#toggleHeader').click(function(e) {
+    e.preventDefault();
+    $('.toggleHeader').slideToggle('fast');
+    return false;
+  });
 
 
     $("#domain" ).change(function() {
@@ -188,7 +210,7 @@ $(document).ready(function(){
     $("#filename_json").change(function(e) {
         var ext = $("input#filename_json").val().split(".").pop().toLowerCase();
         if($.inArray(ext, ["json"]) == -1) {
-            alert('Upload JSON');
+            alert('No a JSON file.');
             return false;
         }
 
@@ -208,7 +230,7 @@ $(document).ready(function(){
     $("#filename_csv").change(function(e) {
         var ext = $("input#filename_csv").val().split(".").pop().toLowerCase();
         if($.inArray(ext, ["csv"]) == -1) {
-            alert('Upload CSV');
+            alert('Not a CSV file');
             return false;
         }
 
