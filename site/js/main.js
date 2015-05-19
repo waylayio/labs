@@ -175,7 +175,7 @@ $(document).ready(function(){
                             myLineChart.removeData();
                     }
                         
-                }, frequency * 1000);
+                }, frequency);
             }
           } else {
             if(frequency && simulationData.length > 0){
@@ -282,7 +282,7 @@ $(document).ready(function(){
                 html += "</table></div>";
                 $('#datatable').replaceWith(html);
 
-                var settingsHTML = '<div id="settings"><label for="frequency">Simulation frequency [secs]</label><input style="width: 80%;margin-left: 40px;margin-bottom: 5px;" class="form-control" type="number" id="frequency" name="frequency" value="1"/></div>';
+                var settingsHTML = '<div id="settings"><label for="frequency">Simulation frequency [ms]</label><input style="width: 80%;margin-left: 40px;margin-bottom: 5px;" class="form-control" type="number" id="frequency" name="frequency" value="1000"/></div>';
                 $('#settings').replaceWith(settingsHTML);
 
                 var countHTML = '<div id="count"><label for="countToStop">Number of records</label><input style="width: 80%;margin-left: 40px;margin-bottom: 5px;" class="form-control" type="number" id="countToStop" name="countToStop" value="' + (rows.length - 1)+'"/></div>';
