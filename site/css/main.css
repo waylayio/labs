@@ -204,7 +204,7 @@ hr.star-docs:after {
 }
 
 hr.star-dash:after {
-    background-color: #fff;
+    background-color: #18bc9c;
 }
 
 hr.star-light {
@@ -373,6 +373,11 @@ section.video {
 section.github {
     color: #fff;
     background: #3498DB;
+}
+
+section.dashboard {
+    color: #fff;
+    background: #18bc9c;
 }
 
 section.lab{

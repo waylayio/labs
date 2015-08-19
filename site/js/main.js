@@ -81,6 +81,7 @@ var ctx;
 $(document).ready(function(){
   $('[data-toggle="tooltip"]').tooltip();
   $("#simulation").hide();
+  $("#table").hide();
   $('#myChart')
     .css('width', ($(window).width()/2) +'px')
     .css('height', '400px');
@@ -140,73 +141,78 @@ $(document).ready(function(){
         changeSettings();
     });
 
-    $("#startSimulation").click(function(e){
-          e.preventDefault();
-          $('#myChartPanel').show();
-          var resource = $('#resource').val();
-          var domain = $('#domain').val();
-          var key = $('#key').val();
-          var password = $('#secret').val();
-          var frequency = $('#frequency').val();
-          var countToStop = parseInt($('#countToStop').val());
-          var count = 0;
-          if(myLineChart && myLineChart.datasets && myLineChart.datasets.length > 0){
-            while(myLineChart.datasets[0].points.length > 0)
-                myLineChart.removeData();
+  $("#startSimulation").click(function(e){
+    e.preventDefault();
+    $('#myChartPanel').show();
+    var resource = $('#resource').val();
+    var domain = $('#domain').val();
+    var key = $('#key').val();
+    var password = $('#secret').val();
+    var frequency = $('#frequency').val();
+    var countToStop = parseInt($('#countToStop').val());
+    var count = 0;
+    if(myLineChart && myLineChart.datasets && myLineChart.datasets.length > 0){
+      while(myLineChart.datasets[0].points.length > 0)
+        myLineChart.removeData();
+    }
+    //chartData["labels"] = [1, 2, 3, 4, 5, 6, 7];
+    if(key && password && domain){
+      if(frequency && simulationData.length > 0){
+        enableSimulation();
+        timerId = setInterval(function(){
+          count++;
+          if(simulationData.length === 0 || count > countToStop){
+            disableSimulation();
+            clearInterval(timerId);
+          } else{
+            if(count > simulationData.length - 1)
+              count = 0;
+            WAYLAY.pushDomainData(domain, key, password, simulationData[count], resource);
+            var point = simulationData[count];
+            var date = new Date();
+            myLineChart.addData(_.values(point),date.getHours() + ":" + date.getMinutes() +":" +date.getSeconds());
+            if(count > 20)
+              myLineChart.removeData();
           }
-          //chartData["labels"] = [1, 2, 3, 4, 5, 6, 7];
-          if(key && password && domain){
-            if(frequency && simulationData.length > 0){
-                timerId = setInterval(function(){ 
-                    enableSimulation();
-                    count++;
-                    if(simulationData.length === 0 || count > countToStop){
-                        disableSimulation();
-                        clearInterval(timerId);
-                    }             
-                    else{
-                        if(count > simulationData.length - 1)
-                            count = 0;
-                        WAYLAY.pushDomainData(domain, key, password, simulationData[count], resource); 
-                        var point = simulationData[count];
-                        var date = new Date();
-                        myLineChart.addData(_.values(point),date.getHours() + ":" + date.getMinutes() +":" +date.getSeconds());
-                        if(count > 20)
-                            myLineChart.removeData();
-                    }
-                        
-                }, frequency);
-            }
-          } else {
-            if(frequency && simulationData.length > 0){
-                timerId = setInterval(function(){ 
-                    enableSimulation();
-                    count++;
-                    if(simulationData.length === 0 || count > countToStop){
-                        disableSimulation();
-                        clearInterval(timerId);
-                    } 
-                    else {
-                        if(count > simulationData.length - 1)
-                            count = 0;
-                        WAYLAY.pushData(simulationData[count], resource);
-                        var point = simulationData[count];
-                        var date = new Date();
-                        myLineChart.addData(_.values(point), date.getHours() + ":" + date.getMinutes() + ":" +date.getSeconds());
-                        if(count > 20)
-                            myLineChart.removeData();
 
-                    }
-                    }, frequency*1000);
-            }
-          }  
-    });
+        }, frequency);
+      }else{
+        alert("Frequency not set or no data loaded");
+      }
+    } else {
+      if(frequency && simulationData.length > 0){
+        enableSimulation();
+        timerId = setInterval(function(){
+          count++;
+          if(simulationData.length === 0 || count > countToStop){
+            disableSimulation();
+            clearInterval(timerId);
+          } else {
+            if(count > simulationData.length - 1)
+              count = 0;
+            WAYLAY.pushData(simulationData[count], resource);
+            var point = simulationData[count];
+            var date = new Date();
+            myLineChart.addData(_.values(point), date.getHours() + ":" + date.getMinutes() + ":" +date.getSeconds());
+            if(count > 20)
+              myLineChart.removeData();
+
+          }
+        }, frequency);
+      }else{
+        alert("Frequency not set or no data loaded");
+      }
+    }
+  });
+
+
     $("#stopSimulation").click(function(e){
         e.preventDefault();
         clearInterval(timerId);
         disableSimulation();
         $('#myChartPanel').hide();
     });
+
     $("#filename_json").change(function(e) {
         var ext = $("input#filename_json").val().split(".").pop().toLowerCase();
         if($.inArray(ext, ["json"]) == -1) {
@@ -227,6 +233,7 @@ $(document).ready(function(){
         }
         return false;
     });
+
     $("#filename_csv").change(function(e) {
         var ext = $("input#filename_csv").val().split(".").pop().toLowerCase();
         if($.inArray(ext, ["csv"]) == -1) {
@@ -280,13 +287,11 @@ $(document).ready(function(){
                     html += "</tr>";
                 });
                 html += "</table></div>";
+                $("#table").show();
                 $('#datatable').replaceWith(html);
 
-                var settingsHTML = '<div id="settings"><label for="frequency">Simulation frequency [ms]</label><input style="width: 80%;margin-left: 40px;margin-bottom: 5px;" class="form-control" type="number" id="frequency" name="frequency" value="1000"/></div>';
-                $('#settings').replaceWith(settingsHTML);
 
-                var countHTML = '<div id="count"><label for="countToStop">Number of records</label><input style="width: 80%;margin-left: 40px;margin-bottom: 5px;" class="form-control" type="number" id="countToStop" name="countToStop" value="' + (rows.length - 1)+'"/></div>';
-                $('#count').replaceWith(countHTML);
+                $('#count').html((rows.length - 1));
 
                 $("#simulation").show();
                 $("#myChart").show();
@@ -313,7 +318,7 @@ $(document).ready(function(){
     // Highlight the top nav as scrolling occurs
     $('body').scrollspy({
         target: '.navbar-fixed-top'
-    })
+    });
 
     // Closes the Responsive Menu on Menu Item Click
     $('.navbar-collapse ul li a').click(function() {
@@ -322,10 +327,10 @@ $(document).ready(function(){
 
     $(".optionName").popover({ trigger: "hover" });
 
-    $("#navigation .nav").tinyNav({
-            active: 'selected', // String: Set the "active" class
-            label: ''
-        });
+    //$("#navigation .nav").tinyNav({
+    //        active: 'selected', // String: Set the "active" class
+    //        label: ''
+    //    });
 
 });
 
