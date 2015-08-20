@@ -43,7 +43,7 @@ var disableSimulation = function(){
     //$("#simulationSettings").fadeIn(1000);
 };
 
-var randomColorGeneator = function () { 
+var randomColorGenerator = function () {
     return '#' + (Math.random().toString(16) + '0000000').slice(2, 8); 
 };
 
@@ -75,7 +75,7 @@ $('#myChartPanel').mutate('height', function(e) {
 var simulationData =[];
 var timerId = 0;
 var chartData = {};
-var myLineChart;
+var simulationLineChart;
 var ctx;
 
 $(document).ready(function(){
@@ -151,9 +151,9 @@ $(document).ready(function(){
     var frequency = $('#frequency').val();
     var countToStop = parseInt($('#countToStop').val());
     var count = 0;
-    if(myLineChart && myLineChart.datasets && myLineChart.datasets.length > 0){
-      while(myLineChart.datasets[0].points.length > 0)
-        myLineChart.removeData();
+    if(simulationLineChart && simulationLineChart.datasets && simulationLineChart.datasets.length > 0){
+      while(simulationLineChart.datasets[0].points.length > 0)
+        simulationLineChart.removeData();
     }
     //chartData["labels"] = [1, 2, 3, 4, 5, 6, 7];
     if(key && password && domain){
@@ -165,14 +165,17 @@ $(document).ready(function(){
             disableSimulation();
             clearInterval(timerId);
           } else{
-            if(count > simulationData.length - 1)
+            if(count > simulationData.length - 1) {
               count = 0;
+            }
             WAYLAY.pushDomainData(domain, key, password, simulationData[count], resource);
             var point = simulationData[count];
             var date = new Date();
-            myLineChart.addData(_.values(point),date.getHours() + ":" + date.getMinutes() +":" +date.getSeconds());
-            if(count > 20)
-              myLineChart.removeData();
+            simulationLineChart.addData(_.values(point), date.getHours() + ":" + date.getMinutes() +":" +date.getSeconds());
+            if(count > 10) {
+              // The chart will remove the first point and animate other points into place
+              simulationLineChart.removeData();
+            }
           }
 
         }, frequency);
@@ -188,15 +191,17 @@ $(document).ready(function(){
             disableSimulation();
             clearInterval(timerId);
           } else {
-            if(count > simulationData.length - 1)
+            if(count > simulationData.length - 1) {
               count = 0;
+            }
             WAYLAY.pushData(simulationData[count], resource);
             var point = simulationData[count];
             var date = new Date();
-            myLineChart.addData(_.values(point), date.getHours() + ":" + date.getMinutes() + ":" +date.getSeconds());
-            if(count > 20)
-              myLineChart.removeData();
-
+            simulationLineChart.addData(_.values(point), date.getHours() + ":" + date.getMinutes() + ":" +date.getSeconds());
+            if(count > 10) {
+              // The chart will remove the first point and animate other points into place
+              simulationLineChart.removeData();
+            }
           }
         }, frequency);
       }else{
@@ -234,6 +239,107 @@ $(document).ready(function(){
         return false;
     });
 
+
+  function buildTable(columnNames, previewRows) {
+    var html = '<table class="table table-striped table-bordered table-condensed" style="width:100%;">';
+    html += "<tr>";
+    columnNames.forEach(function (name) {
+      html += '<th style="text-align: center;">' + name.trim() + "</th>";
+    });
+    html += "</tr>";
+
+    previewRows.forEach(function (row) {
+      html += "<tr>";
+      row.forEach(function (value) {
+        html += "<td>" + parseFloat(value.trim()).toPrecision(3) + "</td>";
+      });
+      html += "</tr>";
+    });
+    html += "</table>";
+    return html;
+  }
+
+  function buildSimulationData(dataRows, columnNames) {
+    return _.map(dataRows, function(columns){
+      var measurement = {};
+      columns.forEach(function (col, index) {
+        var name = columnNames[index];
+        measurement[columnNames[index].trim()] = parseFloat(col).toPrecision(3);
+      });
+      return measurement;
+    });
+  }
+
+  function buildChart(columnNames) {
+    chartData = {
+      labels: [],
+      datasets: []
+    };
+    var k = 0;
+    columnNames.forEach(function (param) {
+      chartData["datasets"][k++] = {
+        label: param,
+        data: [],
+        fillColor: "rgba(230,220,220,0.1)",
+        strokeColor: randomColorGenerator(),
+        highlightFill: randomColorGenerator(),
+        highlightStroke: randomColorGenerator()
+      };
+    });
+    $('#myChartPanel').show();
+
+    //60 is way too heavy and crashes the browser when sending every second
+    Chart.defaults.global.animationSteps = 10;
+
+    var chartDiv = $("#myChart");
+    ctx = chartDiv.get(0).getContext("2d");
+    simulationLineChart = new Chart(ctx).Line(chartData);
+    chartDiv.show();
+  }
+
+  function parseCsv(contents) {
+    var rows = _.filter(contents.split("\n"), function (e) {
+      return e.trim().length > 0
+    });
+    rows = _.map(rows, function (row) {
+      return row.split(",");
+    });
+    return {
+      columnNames: rows[0],
+      dataRows: rows.slice(1, rows.length)
+    };
+  }
+
+  var readCsv = function(file){
+    $("#simulation").hide();
+    $("#table").hide();
+
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      simulationData = [];
+      var content = e.target.result;
+
+      try {
+        var csv = parseCsv(content);
+
+        simulationData = buildSimulationData(csv.dataRows, csv.columnNames);
+
+        buildChart(csv.columnNames);
+
+        var html = buildTable(csv.columnNames, csv.dataRows.slice(0, 3));
+
+        $('#datatable').html(html);
+        $('#count').html((csv.dataRows.length));
+
+        $("#table").show();
+        $("#simulation").show();
+      }catch(e){
+        alert("Failed to parse csv, please check the format")
+      }
+    };
+    reader.readAsText(file);
+  };
+
     $("#filename_csv").change(function(e) {
         var ext = $("input#filename_csv").val().split(".").pop().toLowerCase();
         if($.inArray(ext, ["csv"]) == -1) {
@@ -242,61 +348,7 @@ $(document).ready(function(){
         }
 
         if (e.target.files != undefined) {
-            var reader = new FileReader();
-            reader.onload = function(e) {
-                simulationData = [];
-                var html = '<div id="datatable"> <table class="table table-striped table-bordered table-condensed" style="width:100%;">';
-
-                var rows = e.target.result.split("\n");
-                var params = rows[0].split(",");
-                chartData = {labels : [], datasets:[]};
-                var k =0;
-                params.forEach(function(param){
-                    chartData["datasets"][k++] = {
-                        label: param, 
-                        data:[],
-                        fillColor: "rgba(230,220,220,0.1)",
-                        strokeColor: randomColorGeneator(), 
-                        highlightFill: randomColorGeneator(),
-                        highlightStroke: randomColorGeneator()
-                    };
-                });
-                $('#myChartPanel').show();
-                ctx = $("#myChart").get(0).getContext("2d");
-                myLineChart = new Chart(ctx).Line(chartData);
-                var count = 0;
-                rows.forEach(function(row) {
-                    var columns = row.split(",");
-                    if(count > 0){
-                        var measurement = {};
-                        columns.forEach(function (col, index){
-                            measurement[params[index].trim()] = parseFloat(col).toPrecision(3);
-                        });
-                        simulationData.push(measurement);
-                    }
-                    html += "<tr>";
-                    columns.forEach(function (col){
-                        if(count > 3)
-                            return;
-                        if(count === 0)
-                            html += '<th style="text-align: center;">' + col.trim() + "</th>";
-                        else
-                            html += "<td>" + parseFloat(col.trim()).toPrecision(3) + "</td>";
-                    });
-                    count++;
-                    html += "</tr>";
-                });
-                html += "</table></div>";
-                $("#table").show();
-                $('#datatable').replaceWith(html);
-
-
-                $('#count').html((rows.length - 1));
-
-                $("#simulation").show();
-                $("#myChart").show();
-            };
-            reader.readAsText(e.target.files.item(0));
+          readCsv(e.target.files.item(0));
         }
         return false;
     });
