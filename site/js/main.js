@@ -55,13 +55,10 @@ var changeSettings = function(){
         if(password && resource && key){
           WAYLAY.getCurrentObject(domain, key, password, resource, function(data){
              console.log(data)
-             var params = Object.keys(data)
-             console.log(params)
-             var $input = $("select[id='inputMetric']")
-             $(params).each(function(i, v){ 
-                if(v !== "timestamp")
-                $input.append($('<option value="'+ v +'">'+ v +'</option>'));
-            });
+             metricsData = Object.keys(data)
+             var index = metricsData.indexOf("timestamp");    
+             if(index !== -1)
+                metricsData.splice(index, 1);
           });
         }
     }
@@ -88,11 +85,12 @@ $('#seriesChartPanel').mutate('height', function(e) {
    c.width = ($(window).width()/2);
 });
 
-var simulationData =[];
+var simulationData = [];
 var timerId = 0;
 var chartData = {};
 var simulationLineChart;
 var ctx;
+var metricsData = [];
 
 $(document).ready(function(){
   $('[data-toggle="tooltip"]').tooltip();
@@ -213,13 +211,13 @@ $(document).ready(function(){
 
   var loadTimeSeries = function(metric, data) {
     nv.addGraph(function() {
+      var width = 900, height = 400;
       var chart = nv.models.lineChart()
-        .height(450)
-        .margin({top: 20, right: 20, bottom: 50, left: 55})
         .x(function(d) {return d.x }) 
         .y(function(d) {return d.y }) 
         .xScale(d3.time.scale.utc())
         .useInteractiveGuideline(true)
+        .width(width).height(height);
 
       chart.xAxis
         .axisLabel('Time')
@@ -238,7 +236,8 @@ $(document).ready(function(){
       data.series.forEach(function(d) {
         values.push({x: d[0], y: d[1]});
       });
-      d3.select('#seriesChart svg')
+      d3.select('#seriesChart').append("svg:svg")
+        .style({ 'width': width + 150, 'height': height + 150})
         .datum([{ values: values, key: metric}])
         .transition()
         .duration(0)
@@ -257,15 +256,17 @@ $(document).ready(function(){
     var key = $('#key').val();
     var password = $('#secret').val();
     var resource = $('#resource').val(); 
-    var metric = $('#inputMetric').val();
-    var options = {
-      parameter: metric,
-      resource: resource
-    };
-    if (key && password && domain && metric && resource){
-        WAYLAY.getTimeSeriesData(domain, key, password, options, function(data){
-          loadTimeSeries(metric, data); 
-        }, errorHandler);
+    if (key && password && domain && resource){
+      d3.select("#seriesChart").selectAll("svg").remove();
+      metricsData.forEach(function(metric){
+          var options = {
+            parameter: metric,
+            resource: resource
+          };
+          WAYLAY.getTimeSeriesData(domain, key, password, options, function(data){
+            loadTimeSeries(metric, data); 
+          }, errorHandler);
+        }); 
     } else {
       alert("Missing settings")
     }
