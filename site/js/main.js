@@ -1,10 +1,3 @@
-/*!
- * Start Bootstrap - Freelancer Bootstrap Theme (http://startbootstrap.com)
- * Code licensed under the Apache License v2.0.
- * For details, see http://www.apache.org/licenses/LICENSE-2.0.
- */
-
-// jQuery for page scrolling feature - requires jQuery Easing plugin
 $(function() {
     $('body').on('click', '.page-scroll a', function(event) {
         var $anchor = $(this);
@@ -50,6 +43,7 @@ var randomColorGenerator = function () {
 var changeSettings = function(){
     var resource = $('#resource').val();      
     var domain = $('#domain').val();
+    var key = $('#key').val();
     var enpointhtml='<p id="endpoint">URL: https://data.waylay.io/resources/'+resource+"/current";
     if(domain && domain !== ""){
         enpointhtml += "?domain=" +domain;
@@ -58,9 +52,22 @@ var changeSettings = function(){
         var header = "Header:" + '<span style="font-size: 10px;">Authorization Basic ' + btoa(key + ":" + password) + "</span>";
         var headerhtml = '<p id="headerendpoint">'+ header + "</p>"
         $('#headerendpoint').replaceWith(headerhtml);
+        if(password && resource && key){
+          WAYLAY.getCurrentObject(domain, key, password, resource, function(data){
+             console.log(data)
+             var params = Object.keys(data)
+             console.log(params)
+             var $input = $("select[id='inputMetric']")
+             $(params).each(function(i, v){ 
+                if(v !== "timestamp")
+                $input.append($('<option value="'+ v +'">'+ v +'</option>'));
+            });
+          });
+        }
     }
     enpointhtml += "</p>";
     $('#endpoint').replaceWith(enpointhtml);
+
 };
 
 $('#myChartPanel').mutate('height', function(e) {
@@ -68,6 +75,15 @@ $('#myChartPanel').mutate('height', function(e) {
      .css('width', ($(window).width()/2) +'px')
      .css('height', '400px');
    var c = document.getElementById("myChart");
+   c.height = "400";
+   c.width = ($(window).width()/2);
+});
+
+$('#seriesChartPanel').mutate('height', function(e) {
+   $('#seriesChart')
+     .css('width', ($(window).width()/2) +'px')
+     .css('height', '400px');
+   var c = document.getElementById("seriesChart");
    c.height = "400";
    c.width = ($(window).width()/2);
 });
@@ -111,10 +127,10 @@ $(document).ready(function(){
       var domain = $('#domain').val();
       var key = $('#key').val();
       var password = $('#secret').val();
-      if (domain) {
-        WAYLAY.pushDomainData(domain, key, password, data, resource, successHandler, errorHandler);
+      if (key && password && domain) {
+        WAYLAY.pushData(domain, key, password, data, resource, successHandler, errorHandler);
       } else {
-        WAYLAY.pushData(data, resource, successHandler, errorHandler);
+        alert('please add domain and keys');
       }
     }catch(e){
       errorHandler(e.message);
@@ -128,18 +144,19 @@ $(document).ready(function(){
   });
 
 
-    $("#domain" ).change(function() {
-        changeSettings();
-    });
-    $("#resource" ).change(function() {
-        changeSettings();
-    });
-    $("#key" ).change(function() {
-        changeSettings();
-    });
-    $("#secret" ).change(function() {
-        changeSettings();
-    });
+  $("#domain" ).change(function() {
+      changeSettings();
+  });
+  $("#resource" ).change(function() {
+      changeSettings();
+  });
+  $("#key" ).change(function() {
+      changeSettings();
+  });
+  $("#secret" ).change(function() {
+      changeSettings();
+  });
+
 
   $("#startSimulation").click(function(e){
     e.preventDefault();
@@ -168,7 +185,7 @@ $(document).ready(function(){
             if(count > simulationData.length - 1) {
               count = 0;
             }
-            WAYLAY.pushDomainData(domain, key, password, simulationData[count], resource);
+            WAYLAY.pushData(domain, key, password, simulationData[count], resource);
             var point = simulationData[count];
             var date = new Date();
             simulationLineChart.addData(_.values(point), date.getHours() + ":" + date.getMinutes() +":" +date.getSeconds());
@@ -183,61 +200,97 @@ $(document).ready(function(){
         alert("Frequency not set or no data loaded");
       }
     } else {
-      if(frequency && simulationData.length > 0){
-        enableSimulation();
-        timerId = setInterval(function(){
-          count++;
-          if(simulationData.length === 0 || count > countToStop){
-            disableSimulation();
-            clearInterval(timerId);
-          } else {
-            if(count > simulationData.length - 1) {
-              count = 0;
-            }
-            WAYLAY.pushData(simulationData[count], resource);
-            var point = simulationData[count];
-            var date = new Date();
-            simulationLineChart.addData(_.values(point), date.getHours() + ":" + date.getMinutes() + ":" +date.getSeconds());
-            if(count > 10) {
-              // The chart will remove the first point and animate other points into place
-              simulationLineChart.removeData();
-            }
-          }
-        }, frequency);
-      }else{
-        alert("Frequency not set or no data loaded");
-      }
+      alert("please add domain and keys");
     }
   });
 
+  $("#stopSimulation").click(function(e){
+      e.preventDefault();
+      clearInterval(timerId);
+      disableSimulation();
+      $('#myChartPanel').hide();
+  });
 
-    $("#stopSimulation").click(function(e){
-        e.preventDefault();
-        clearInterval(timerId);
-        disableSimulation();
-        $('#myChartPanel').hide();
-    });
+  var loadTimeSeries = function(metric, data) {
+    nv.addGraph(function() {
+      var chart = nv.models.lineChart()
+        .height(450)
+        .margin({top: 20, right: 20, bottom: 50, left: 55})
+        .x(function(d) {return d.x }) 
+        .y(function(d) {return d.y }) 
+        .xScale(d3.time.scale.utc())
+        .useInteractiveGuideline(true)
 
-    $("#filename_json").change(function(e) {
-        var ext = $("input#filename_json").val().split(".").pop().toLowerCase();
-        if($.inArray(ext, ["json"]) == -1) {
-            alert('No a JSON file.');
-            return false;
-        }
+      chart.xAxis
+        .axisLabel('Time')
+        .staggerLabels(true)
+        .showMaxMin(false)
+        .tickFormat(function(d) {
+            return d3.time.format('%x %X')(new Date(d));
+          });
 
-        if (e.target.files != undefined) {
-            var reader = new FileReader();
-            reader.onload = function(e) {
-                var settings = JSON.parse(e.target.result);
-                $('#domain').val(settings.domain);
-                $('#key').val(settings.key);
-                $('#secret').val(settings.secret);
-                changeSettings();
-            };
-            reader.readAsText(e.target.files.item(0));
-        }
-        return false;
-    });
+      chart.yAxis
+        .showMaxMin(false)
+        .axisLabelDistance(30)
+        .tickFormat(d3.format('.02f'));
+  
+      var values = [];
+      data.series.forEach(function(d) {
+        values.push({x: d[0], y: d[1]});
+      });
+      d3.select('#seriesChart svg')
+        .datum([{ values: values, key: metric}])
+        .transition()
+        .duration(0)
+        .call(chart);
+
+      nv.utils.windowResize(chart.update);
+
+      return chart;
+  });
+
+  }
+
+  $("#getSeriesData").click(function(e){
+    e.preventDefault();
+    var domain = $('#domain').val();
+    var key = $('#key').val();
+    var password = $('#secret').val();
+    var resource = $('#resource').val(); 
+    var metric = $('#inputMetric').val();
+    var options = {
+      parameter: metric,
+      resource: resource
+    };
+    if (key && password && domain && metric && resource){
+        WAYLAY.getTimeSeriesData(domain, key, password, options, function(data){
+          loadTimeSeries(metric, data); 
+        }, errorHandler);
+    } else {
+      alert("Missing settings")
+    }
+  });
+
+  $("#filename_json").change(function(e) {
+      var ext = $("input#filename_json").val().split(".").pop().toLowerCase();
+      if($.inArray(ext, ["json"]) == -1) {
+          alert('No a JSON file.');
+          return false;
+      }
+
+      if (e.target.files != undefined) {
+          var reader = new FileReader();
+          reader.onload = function(e) {
+              var settings = JSON.parse(e.target.result);
+              $('#domain').val(settings.domain);
+              $('#key').val(settings.key);
+              $('#secret').val(settings.secret);
+              changeSettings();
+          };
+          reader.readAsText(e.target.files.item(0));
+      }
+      return false;
+  });
 
 
   function buildTable(columnNames, previewRows) {
@@ -413,27 +466,3 @@ $('#filename_json').bind('change', function () {
 });
 
 
-
-
-
-// $(document).on('change', '.btn-file :file', function() {
-//   var input = $(this),
-//       numFiles = input.get(0).files ? input.get(0).files.length : 1,
-//       label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
-//   input.trigger('fileselect', [numFiles, label]);
-// });
-
-// $(document).ready( function() {
-//     $('.btn-file :file').on('fileselect', function(event, numFiles, label) {
-        
-//         var input = $(this).parents('.input-group').find(':text'),
-//             log = numFiles > 1 ? numFiles + ' files selected' : label;
-        
-//         if( input.length ) {
-//             input.val(log);
-//         } else {
-//             if( log ) alert(log);
-//         }
-        
-//     });
-// });
