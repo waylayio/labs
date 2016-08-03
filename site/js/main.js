@@ -40,6 +40,32 @@ var randomColorGenerator = function () {
     return '#' + (Math.random().toString(16) + '0000000').slice(2, 8); 
 };
 
+var initSocket = function(domain, resource, token){
+  socket = new WebSocket("wss://data.waylay.io/resources/"+resource +"/socket?domain=" + domain + "&token=" + token);
+  socket.onopen = function(){
+    //alertMessage.add(alertMessage.TYPE.INFO, 'Socket connected', true);
+    console.log("Socket connected");
+  };
+  socket.onmessage = function(msg){
+    var parsed = JSON.parse(msg.data);
+    console.log(parsed)
+    $( "#websocketData" ).text(msg.data);
+    var i = 0;
+    metricsData.forEach(function(metric){
+      if(!metricsSocketData[i])
+        metricsSocketData[i] = [];
+      metricsSocketData[i].push(parseFloat(parsed[metric]));
+      var k = i+1;
+      $('#websocketChart'+k).sparkline(metricsSocketData[i++])
+    });
+  };
+
+  socket.onclose = function(){
+    //alertMessage.add(alertMessage.TYPE.INFO, 'Socket closed', true);
+    console.log("Socket closed");
+  }
+};
+
 var changeSettings = function(){
     var resource = $('#resource').val();      
     var domain = $('#domain').val();
@@ -59,6 +85,10 @@ var changeSettings = function(){
              var index = metricsData.indexOf("timestamp");    
              if(index !== -1)
                 metricsData.splice(index, 1);
+             metricsSocketData = new Array(metricsData.length)
+          });
+          WAYLAY.getToken(domain, key, password, function(token){
+            initSocket(domain, resource, token);
           });
         }
     }
@@ -91,6 +121,8 @@ var chartData = {};
 var simulationLineChart;
 var ctx;
 var metricsData = [];
+var metricsSocketData = [];
+var socket;
 
 $(document).ready(function(){
   $('[data-toggle="tooltip"]').tooltip();
@@ -115,6 +147,46 @@ $(document).ready(function(){
   var successHandler = function(info){
     $("#info").text(info);
   };
+
+  $("#getLatestObject").click(function(e){
+    e.preventDefault();
+    var resource = $('#resource').val();
+    try {
+      var data = JSON.parse($('#data').val());
+      var domain = $('#domain').val();
+      var key = $('#key').val();
+      var password = $('#secret').val();
+      if (key && password && domain) {
+        WAYLAY.getCurrentObject(domain, key, password, resource, function(data) {
+          $("#latestObject").text(JSON.stringify(data));
+        }, errorHandler);
+      } else {
+        alert('please add domain and keys');
+      }
+    }catch(e){
+      errorHandler(e.message);
+    }
+  });
+
+  $("#getAllObjects").click(function(e){
+    e.preventDefault();
+    var resource = $('#resource').val();
+    try {
+      var data = JSON.parse($('#data').val());
+      var domain = $('#domain').val();
+      var key = $('#key').val();
+      var password = $('#secret').val();
+      if (key && password && domain) {
+        WAYLAY.getAllObjects(domain, key, password, resource, function(data) {
+          $("#allObjects").text(JSON.stringify(data));
+        }, errorHandler);
+      } else {
+        alert('please add domain and keys');
+      }
+    }catch(e){
+      errorHandler(e.message);
+    }
+  });
 
   $("#pushDomain").click(function(e){
     clearMessages();

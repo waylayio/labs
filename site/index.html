@@ -170,11 +170,45 @@
     </div><!--container -->
 </section>
 
+<!-- Websocket -->
+<section id="chart" class="content-section text-center">
+    <div class="container">
+        <h2>Websockets</h2>
+        <div class="col-lg-10 col-lg-offset-1">
+            <pre id="websocketData">Websocket Data</pre>
+            <div id="websocketChart1"></div>
+            <div id="websocketChart2"></div>
+            <div id="websocketChart3"></div>
+            <div id="websocketChart4"></div>
+            <div id="websocketChart5"></div>
+        </div>
+    </div>
+</section>
+
+<section id="cloudCache" class="content-section text-center">
+    <div class="container">
+        <h2>Cloud Cache</h2>
+        <div class="col-lg-10 col-lg-offset-1">
+            <pre id="latestObject">Latest Object</pre>
+        </div>
+        <div>
+            <button class="btn btn-default btn-lg" id="getLatestObject">Get Latest Object</button>
+        </div>
+        <hr>
+        <div class="col-lg-10 col-lg-offset-1">
+            <pre id="allObjects">All Objects</pre>
+        </div>
+        <div>
+            <button class="btn btn-default btn-lg" id="getAllObjects">Get All Objects</button>
+        </div>
+    </div>
+</section>
+
+
 <!-- Charts -->
 <section id="chart" class="content-section text-center">
     <div class="container">
-        <h2>Chart</h2>
-        <p>Plot data from Times Series Database</p> 
+        <h2>Times Series Database</h2>
         <div>
             <button class="btn btn-default btn-lg" id="getSeriesData">Plot Data</button>
         </div>
@@ -184,6 +218,7 @@
         </div>
     </div>
 </section>
+
 
 <!-- Freeboard -->
 <section id="freeboard" class="dashboard content-section text-center">
@@ -265,6 +300,7 @@
 <script src="js/mutate.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.2/d3.min.js" charset="utf-8"></script>
 <script src="https://cdn.rawgit.com/novus/nvd3/v1.8.1/build/nv.d3.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-sparklines/2.1.2/jquery.sparkline.js"></script>
 
 
 
