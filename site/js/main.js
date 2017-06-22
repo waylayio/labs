@@ -377,7 +377,7 @@ $(document).ready(function(){
     previewRows.forEach(function (row) {
       html += "<tr>";
       row.forEach(function (value) {
-        html += "<td>" + parseFloat(value.trim()).toPrecision(3) + "</td>";
+        html += "<td>" + parseFloat(value.trim()).toPrecision(8) + "</td>";
       });
       html += "</tr>";
     });
