@@ -390,7 +390,7 @@ $(document).ready(function(){
       var measurement = {};
       columns.forEach(function (col, index) {
         var name = columnNames[index];
-        measurement[columnNames[index].trim()] = parseFloat(col).toPrecision(3);
+        measurement[columnNames[index].trim()] = parseFloat(col).toPrecision(8);
       });
       return measurement;
     });
