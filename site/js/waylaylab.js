@@ -1,32 +1,32 @@
 if (!window.WAYLAY) {
   WAYLAY = {
-    getToken: function(domain, user, pass, callback, onError) {
-      var data = {
-          "username": user,
-          "password": pass,
-          "grant_type": "client_credentials"
-      };
-      $.ajax({
-        type: "POST",
-        crossDomain: true,
-        data: JSON.stringify(data),
-        dataType: "json",
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          "Authorization": "Basic " + btoa(user + ":" + pass)
-        },
-        url: "https://"+domain + "/api/auth/token",
-        success: function(data) {
-          callback(data.access_token);
-        },
-        error: function(jqXHR, textStatus, errorThrown) {
-          console.log(jqXHR);
-          if(onError) {
-            onError(jqXHR.responseText);
-          }
-        }});
-    },
+    // getToken: function(domain, user, pass, callback, onError) {
+    //   var data = {
+    //       "username": user,
+    //       "password": pass,
+    //       "grant_type": "client_credentials"
+    //   };
+    //   $.ajax({
+    //     type: "POST",
+    //     crossDomain: true,
+    //     data: JSON.stringify(data),
+    //     dataType: "json",
+    //     headers: {
+    //       'Accept': 'application/json',
+    //       'Content-Type': 'application/json',
+    //       "Authorization": "Basic " + btoa(user + ":" + pass)
+    //     },
+    //     url: "https://"+domain + "/api/auth/token",
+    //     success: function(data) {
+    //       callback(data.access_token);
+    //     },
+    //     error: function(jqXHR, textStatus, errorThrown) {
+    //       console.log(jqXHR);
+    //       if(onError) {
+    //         onError(jqXHR.responseText);
+    //       }
+    //     }});
+    // },
     getCurrentObject: function(domain, user, pass, resource, callback, onError) {
       $.ajax({
         type: "GET",

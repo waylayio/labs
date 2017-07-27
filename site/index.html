@@ -104,6 +104,11 @@
                         <input type="file" name="filename_json" id="filename_json">
                     </div>
                 </div>
+
+                <a href="" class="btn btn-default" id="downloadSettings"><i class="fa fa-download"></i> Download settings</a>
+                <br/>
+                <br/>
+
             </div>
 
             <div>
@@ -173,9 +178,9 @@
 <!-- Websocket -->
 <section id="chart" class="content-section text-center">
     <div class="container">
-        <h2>Websockets</h2>
+        <h2>Websocket</h2>
         <div class="col-lg-10 col-lg-offset-1">
-            <pre id="websocketData">Websocket Data</pre>
+            <pre id="websocketData" class="text-left">Websocket Data</pre>
             <div id="websocketChart1"></div>
             <div id="websocketChart2"></div>
             <div id="websocketChart3"></div>
@@ -189,14 +194,14 @@
     <div class="container">
         <h2>Cloud Cache</h2>
         <div class="col-lg-10 col-lg-offset-1">
-            <pre id="latestObject">Latest Object</pre>
+            <pre id="latestObject" class="text-left">Latest Object</pre>
         </div>
         <div>
             <button class="btn btn-default btn-lg" id="getLatestObject">Get Latest Object</button>
         </div>
         <hr>
         <div class="col-lg-10 col-lg-offset-1">
-            <pre id="allObjects">All Objects</pre>
+            <pre id="allObjects" class="text-left" style="overflow: auto;height: 200px;">All Objects</pre>
         </div>
         <div>
             <button class="btn btn-default btn-lg" id="getAllObjects">Get All Objects</button>

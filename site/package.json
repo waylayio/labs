@@ -5,8 +5,8 @@
   "description": "The waylay labs site",
   "repository": "https://github.com/waylayio/labs",
   "devDependencies": {
-    "gulp": "~3.8.11",
-    "gulp-connect": "~2.2.0"
+    "gulp": "~3.9.1",
+    "gulp-connect": "~5.0.0"
   },
   "scripts": {
     "gulp": "node ./node_modules/gulp/bin/gulp.js"

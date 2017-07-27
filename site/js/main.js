@@ -40,11 +40,15 @@ var randomColorGenerator = function () {
     return '#' + (Math.random().toString(16) + '0000000').slice(2, 8); 
 };
 
-var initSocket = function(domain, resource, token){
-  socket = new WebSocket("wss://data.waylay.io/resources/"+resource +"/socket?domain=" + domain + "&token=" + token);
+var initSocket = function(domain, resource, apiKey, apiSecret){
+  socket = new WebSocket("wss://data.waylay.io/resources/" + resource + "/socket?domain=" + domain + "&apiKey=" + apiKey + "&apiSecret=" + apiSecret);
   socket.onopen = function(){
     //alertMessage.add(alertMessage.TYPE.INFO, 'Socket connected', true);
     console.log("Socket connected");
+  };
+  socket.onerror = function(e){
+    //alertMessage.add(alertMessage.TYPE.INFO, 'Socket connected', true);
+    console.log("Socket error: " + e);
   };
   socket.onmessage = function(msg){
     var parsed = JSON.parse(msg.data);
@@ -67,14 +71,29 @@ var initSocket = function(domain, resource, token){
 };
 
 var changeSettings = function(){
-    var resource = $('#resource').val();      
-    var domain = $('#domain').val();
-    var key = $('#key').val();
+
+  var domain = $('#domain').val()
+  var key = $('#key').val()
+  var secret = $('#secret').val()
+  var resource = $('#resource').val()
+
+  // create settings download link
+  var settings = {
+    domain: domain,
+    key: key,
+    secret: secret
+  }
+  var settingJson = JSON.stringify(settings, null, 2)
+  var blob = new Blob([settingJson], {type: 'application/json'})
+  var url = window.URL.createObjectURL(blob)
+  $('#downloadSettings').attr("href", url)
+  $('#downloadSettings').attr("download", domain + "_labs_settings.json")
+
+
     var enpointhtml='<p id="endpoint">URL: https://data.waylay.io/resources/'+resource+"/current";
     if(domain && domain !== ""){
         enpointhtml += "?domain=" +domain;
-        var key = $('#key').val();
-        var password = $('#secret').val();
+        var password = secret
         var header = "Header:" + '<span style="font-size: 10px;">Authorization Basic ' + btoa(key + ":" + password) + "</span>";
         var headerhtml = '<p id="headerendpoint">'+ header + "</p>"
         $('#headerendpoint').replaceWith(headerhtml);
@@ -87,9 +106,7 @@ var changeSettings = function(){
                 metricsData.splice(index, 1);
              metricsSocketData = new Array(metricsData.length)
           });
-          WAYLAY.getToken(domain, key, password, function(token){
-            initSocket(domain, resource, token);
-          });
+          initSocket(domain, resource, key, secret)
         }
     }
     enpointhtml += "</p>";
@@ -158,7 +175,7 @@ $(document).ready(function(){
       var password = $('#secret').val();
       if (key && password && domain) {
         WAYLAY.getCurrentObject(domain, key, password, resource, function(data) {
-          $("#latestObject").text(JSON.stringify(data));
+          $("#latestObject").text(JSON.stringify(data, null, 2));
         }, errorHandler);
       } else {
         alert('please add domain and keys');
@@ -178,7 +195,7 @@ $(document).ready(function(){
       var password = $('#secret').val();
       if (key && password && domain) {
         WAYLAY.getAllObjects(domain, key, password, resource, function(data) {
-          $("#allObjects").text(JSON.stringify(data));
+          $("#allObjects").text(JSON.stringify(data, null, 2));
         }, errorHandler);
       } else {
         alert('please add domain and keys');
