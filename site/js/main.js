@@ -37,7 +37,7 @@ var disableSimulation = function(){
 };
 
 var randomColorGenerator = function () {
-    return '#' + (Math.random().toString(16) + '0000000').slice(2, 8); 
+    return '#' + (Math.random().toString(16) + '0000000').slice(2, 8);
 };
 
 var initSocket = function(domain, resource, apiKey, apiSecret){
@@ -101,7 +101,7 @@ var changeSettings = function(){
           WAYLAY.getCurrentObject(domain, key, password, resource, function(data){
              console.log(data)
              metricsData = Object.keys(data)
-             var index = metricsData.indexOf("timestamp");    
+             var index = metricsData.indexOf("timestamp");
              if(index !== -1)
                 metricsData.splice(index, 1);
              metricsSocketData = new Array(metricsData.length)
@@ -214,8 +214,9 @@ $(document).ready(function(){
       var domain = $('#domain').val();
       var key = $('#key').val();
       var password = $('#secret').val();
+      var toStore = $('#toStore').is(':checked')
       if (key && password && domain) {
-        WAYLAY.pushData(domain, key, password, data, resource, successHandler, errorHandler);
+        WAYLAY.pushData(domain, key, password, data, resource, toStore, successHandler, errorHandler);
       } else {
         alert('please add domain and keys');
       }
@@ -254,6 +255,7 @@ $(document).ready(function(){
     var password = $('#secret').val();
     var frequency = $('#frequency').val();
     var countToStop = parseInt($('#countToStop').val());
+    var toStore = $('#toStore').is(':checked')
     var count = 0;
     if(simulationLineChart && simulationLineChart.datasets && simulationLineChart.datasets.length > 0){
       while(simulationLineChart.datasets[0].points.length > 0)
@@ -272,7 +274,7 @@ $(document).ready(function(){
             if(count > simulationData.length - 1) {
               count = 0;
             }
-            WAYLAY.pushData(domain, key, password, simulationData[count], resource);
+            WAYLAY.pushData(domain, key, password, simulationData[count], resource, toStore);
             var point = simulationData[count];
             var date = new Date();
             simulationLineChart.addData(_.values(point), date.getHours() + ":" + date.getMinutes() +":" +date.getSeconds());
@@ -302,8 +304,8 @@ $(document).ready(function(){
     nv.addGraph(function() {
       var width = 900, height = 400;
       var chart = nv.models.lineChart()
-        .x(function(d) {return d.x }) 
-        .y(function(d) {return d.y }) 
+        .x(function(d) {return d.x })
+        .y(function(d) {return d.y })
         .xScale(d3.time.scale.utc())
         .useInteractiveGuideline(true)
         .width(width).height(height);
@@ -320,7 +322,7 @@ $(document).ready(function(){
         .showMaxMin(false)
         .axisLabelDistance(30)
         .tickFormat(d3.format('.02f'));
-  
+
       var values = [];
       data.series.forEach(function(d) {
         values.push({x: d[0], y: d[1]});
@@ -344,7 +346,7 @@ $(document).ready(function(){
     var domain = $('#domain').val();
     var key = $('#key').val();
     var password = $('#secret').val();
-    var resource = $('#resource').val(); 
+    var resource = $('#resource').val();
     if (key && password && domain && resource){
       d3.select("#seriesChart").selectAll("svg").remove();
       metricsData.forEach(function(metric){
@@ -353,9 +355,9 @@ $(document).ready(function(){
             resource: resource
           };
           WAYLAY.getTimeSeriesData(domain, key, password, options, function(data){
-            loadTimeSeries(metric, data); 
+            loadTimeSeries(metric, data);
           }, errorHandler);
-        }); 
+        });
     } else {
       alert("Missing settings")
     }
@@ -496,20 +498,20 @@ $(document).ready(function(){
         return false;
     });
 
-    
+
     $(window).scroll(function(){
         if ($(this).scrollTop() > 100) {
             $('.scrollup').fadeIn();
         } else {
             $('.scrollup').fadeOut();
         }
-    }); 
+    });
 
     $('.scrollup').click(function(){
         $("html, body").animate({ scrollTop: 0 }, 600);
         return false;
     });
-    
+
     // Highlight the top nav as scrolling occurs
     $('body').scrollspy({
         target: '.navbar-fixed-top'
@@ -534,11 +536,11 @@ $('#filename_csv').bind('change', function () {
   var filename = $("#filename_csv").val();
   if (/^\s*$/.test(filename)) {
     $(".file-upload").removeClass('active');
-    $("#noFile").text("No file chosen..."); 
+    $("#noFile").text("No file chosen...");
   }
   else {
     $(".file-upload").addClass('active');
-    $("#noFile").text(filename.replace("C:\\fakepath\\", "")); 
+    $("#noFile").text(filename.replace("C:\\fakepath\\", ""));
   }
 });
 
@@ -547,12 +549,10 @@ $('#filename_json').bind('change', function () {
   var filename = $("#filename_json").val();
   if (/^\s*$/.test(filename)) {
     $(".file-upload").removeClass('active');
-    $("#noFile2").text("No file chosen..."); 
+    $("#noFile2").text("No file chosen...");
   }
   else {
     $(".file-upload").addClass('active');
-    $("#noFile2").text(filename.replace("C:\\fakepath\\", "")); 
+    $("#noFile2").text(filename.replace("C:\\fakepath\\", ""));
   }
 });
-
-

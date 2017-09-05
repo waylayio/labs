@@ -70,7 +70,7 @@ if (!window.WAYLAY) {
       });
     },
     /*options in format {
-      resource: 
+      resource:
       grouping: [min|max|mean|median]
       parameter:
       from: UTC time
@@ -105,11 +105,11 @@ if (!window.WAYLAY) {
         }
       });
     },
-    pushData: function(domain, user, pass, data, resource, onSuccess, onError) {
+    pushData: function(domain, user, pass, data, resource, toStore, onSuccess, onError) {
       $.ajax({
         type: "POST",
         crossDomain: true,
-        url: "https://data.waylay.io/resources/" + resource + "?domain=" + domain,
+        url: "https://data.waylay.io/resources/" + resource + "?domain=" + domain + "&store=" +toStore,
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
