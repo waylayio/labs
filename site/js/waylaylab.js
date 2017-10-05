@@ -106,30 +106,64 @@ if (!window.WAYLAY) {
       });
     },
     pushData: function(domain, user, pass, data, resource, toStore, onSuccess, onError) {
-      $.ajax({
-        type: "POST",
-        crossDomain: true,
-        url: "https://data.waylay.io/resources/" + resource + "?domain=" + domain + "&store=" +toStore,
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          "Authorization": "Basic " + btoa(user + ":" + pass)
-        },
-        data: JSON.stringify(data),
-        dataType: "json",
-        success: function(data) {
-          console.log(data.message);
-          if(onSuccess){
-            onSuccess(data.message);
+      var resources = resource.split(",")
+      if(resources.length === 1){
+        $.ajax({
+          type: "POST",
+          crossDomain: true,
+          url: "https://data.waylay.io/resources/" + resource + "?store=" +toStore,
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            "Authorization": "Basic " + btoa(user + ":" + pass)
+          },
+          data: JSON.stringify(data),
+          dataType: "json",
+          success: function(data) {
+            console.log(data.message);
+            if(onSuccess){
+              onSuccess(data.message + ":" + JSON.stringify(data.content));
+            }
+          },
+          error: function(jqXHR, textStatus, errorThrown) {
+            console.log(jqXHR);
+            if(onError) {
+              onError(jqXHR.responseText);
+            }
           }
-        },
-        error: function(jqXHR, textStatus, errorThrown) {
-          console.log(jqXHR);
-          if(onError) {
-            onError(jqXHR.responseText);
+        })
+      } else {
+        var dataArray = []
+        resources.forEach(function (resource) {
+          var d = JSON.parse(JSON.stringify(data))
+          d.resource = resource.trim()
+          dataArray.push(d)
+        })
+        $.ajax({
+          type: "POST",
+          crossDomain: true,
+          url: "https://data.waylay.io/messages?store=" +toStore,
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            "Authorization": "Basic " + btoa(user + ":" + pass)
+          },
+          data: JSON.stringify(dataArray),
+          dataType: "json",
+          success: function(data) {
+            console.log(data.message);
+            if(onSuccess){
+              onSuccess(data.message);
+            }
+          },
+          error: function(jqXHR, textStatus, errorThrown) {
+            console.log(jqXHR);
+            if(onError) {
+              onError(jqXHR.responseText);
+            }
           }
-        }
-      });
+        })
+      }
     },
     pushParamValue: function(domain, user, pass, parameter, value, resource, onSuccess, onError) {
       $.ajax({

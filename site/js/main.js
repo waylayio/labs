@@ -40,6 +40,19 @@ var randomColorGenerator = function () {
     return '#' + (Math.random().toString(16) + '0000000').slice(2, 8);
 };
 
+var addRandom = function(data) {
+  for(var index in data) {
+    if (data.hasOwnProperty(index) && !isNaN(data[index])) {
+      var r = Math.random()
+      if(r >0.5)
+        data[index] += r * 2
+      else
+        data[index] -= r * 2
+    }
+  }
+  return data
+}
+
 var initSocket = function(domain, resource, apiKey, apiSecret){
   socket = new WebSocket("wss://data.waylay.io/resources/" + resource + "/socket?domain=" + domain + "&apiKey=" + apiKey + "&apiSecret=" + apiSecret);
   socket.onopen = function(){
@@ -215,6 +228,10 @@ $(document).ready(function(){
       var key = $('#key').val();
       var password = $('#secret').val();
       var toStore = $('#toStore').is(':checked')
+      var random = $('#random').is(':checked')
+      if(random){
+        data = addRandom(data)
+      }
       if (key && password && domain) {
         WAYLAY.pushData(domain, key, password, data, resource, toStore, successHandler, errorHandler);
       } else {
