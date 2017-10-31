@@ -83,95 +83,99 @@
         <h2>Simulator</h2>
         <hr class="star-lab">
         <p>Stream data to the waylay broker</p>
-
-        <div class="col-lg-8 col-lg-offset-2">
-            <div id="settingsPanel">
-                <h4>Settings</h4>
-                <div>
-                    <input style="margin-bottom: 5px;" placeholder="Domain:" type="text" id="domain" name="domain" class="form-control form-control-centered">
-                </div>
-                <div>
-                    <input style="margin-bottom: 5px;" placeholder="API key:" type="password" id="key" name="key" class="form-control form-control-centered"/>
-                </div>
-                <div>
-                    <input style="margin-bottom: 5px;" type="password" placeholder="API secret:" id="secret" name="secret" class="form-control form-control-centered"/>
-                </div>
-
-                <div class="file-upload form-control-centered">
-                    <div class="file-select">
-                        <label class="file-select-button" id="fajlName2" for="filename_json">Load settings json:</label>
-                        <div class="file-select-name" id="noFile2">No file chosen...</div>
-                        <input type="file" name="filename_json" id="filename_json">
+        <div class="row">
+            <div class="col-lg-6">
+                <div id="settingsPanel">
+                    <h4>Settings</h4>
+                    <div>
+                        <input style="margin-bottom: 5px;" placeholder="Domain:" type="text" id="domain" name="domain" class="form-control form-control-centered">
                     </div>
-                </div>
+                    <div>
+                        <input style="margin-bottom: 5px;" placeholder="API key:" type="password" id="key" name="key" class="form-control form-control-centered"/>
+                    </div>
+                    <div>
+                        <input style="margin-bottom: 5px;" type="password" placeholder="API secret:" id="secret" name="secret" class="form-control form-control-centered"/>
+                    </div>
 
-                <a href="" class="btn btn-default" id="downloadSettings"><i class="fa fa-download"></i> Download settings</a>
-                <br/>
-                <br/>
-
-            </div>
-
-            <div>
-                <h4>Resource</h4>
-                <input style="margin-bottom: 5px;" type="text" id="resource" placeholder="testresource" name="resource" class="form-control form-control-centered" value="testresource"/>
-            </div>
-
-            <hr>
-
-            <div id="measurementPanel">
-                <h4>Single measurement</h4>
-                <div>
-                    <textarea class="form-control form-control-centered" id="data" name="data">{ "temperature" : 23}</textarea>
-                </div>
-                <br>
-
-                <div>
-                    <input type="checkbox" name="toStore" id="toStore" checked>Should store data?</input>
-                    <input type="checkbox" name="addRandomness" id="random">Should add randomness?</input><br>
-                    <button class="btn btn-default btn-lg" id="pushDomain">Push Data</button>
-                </div>
-                <p class="text-danger" id="error"></p>
-                <p class="text-info" id="info"></p>
-            </div>
-
-            <hr>
-
-            <h4>Multiple measurements</h4>
-            <div id="simulationSettings">
-                <div id="table">
-                    <div id="datatable"></div>
-                    <div><span id="count">0</span> rows</div>
-                </div>
-                <div>
-                    <label for="frequency">Simulation frequency [ms]</label>
-                    <input style="margin-bottom: 5px;" class="form-control form-control-centered" type="number" id="frequency" name="frequency" value="1000"/>
-                </div>
-
-                <small>
-                    <i class="fa fa-info-circle"></i>
-                    Expected CSV format info and examples available at <a href="https://github.com/waylayio/data" target="_blank">github</a>
-                </small>
-
-                <div>
                     <div class="file-upload form-control-centered">
                         <div class="file-select">
-                            <label class="file-select-button" id="fajlName" for="filename_csv">Load csv:</label>
-                            <div class="file-select-name" id="noFile">No file chosen...</div>
-                            <input type="file" name="filename_csv" id="filename_csv">
+                            <label class="file-select-button" id="fajlName2" for="filename_json">Load settings json:</label>
+                            <div class="file-select-name" id="noFile2">No file chosen...</div>
+                            <input type="file" name="filename_json" id="filename_json">
                         </div>
                     </div>
 
+                    <a href="" class="btn btn-default" id="downloadSettings"><i class="fa fa-download"></i> Download settings</a>
+                    <br/>
+                    <br/>
+
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div>
+                    <h4>Resource</h4>
+                    <input style="margin-bottom: 5px;" type="text" id="resource" placeholder="testresource" name="resource" class="form-control form-control-centered" value="testresource"/>
                 </div>
 
-                <div id="simulation">
-                    <button class="btn btn-default btn-lg" id="startSimulation">Start Simulation</button>
-                    <button class="btn btn-default btn-lg" disabled="true" id="stopSimulation">Stop Simulation</button>
+                <div id="measurementPanel">
+                    <h4>Single measurement</h4>
+                    <div>
+                        <textarea class="form-control form-control-centered" id="data" name="data">{ "temperature" : 23}</textarea>
+                    </div>
+                    <br>
+
+                    <div>
+                        <input type="checkbox" name="toStore" id="toStore" checked>Should store data?</input>
+                        <input type="checkbox" name="addRandomness" id="random">Should add randomness?</input><br>
+                        <button class="btn btn-default btn-lg" id="pushDomain">Push Data</button>
+                    </div>
+                    <p class="text-danger" id="error"></p>
+                    <p class="text-info" id="info"></p>
                 </div>
             </div>
         </div>
-        <div class="col-lg-10 col-lg-offset-1">
-            <div id="myChartPanel">
-                <canvas id="myChart" height="400px"></canvas>
+        <hr>
+        <div class="row">
+            <div class="col-lg-12">
+                <h4>Multiple measurements</h4>
+                <div id="simulationSettings">
+                    <div id="table">
+                        <div id="datatable"></div>
+                        <div><span id="count">0</span> rows</div>
+                    </div>
+                    <div>
+                        <label for="frequency">Simulation frequency [ms]</label>
+                        <input style="margin-bottom: 5px;" class="form-control form-control-centered" type="number" id="frequency" name="frequency" value="1000"/>
+                    </div>
+
+                    <small>
+                        <i class="fa fa-info-circle"></i>
+                        Expected CSV format info and examples available at <a href="https://github.com/waylayio/data" target="_blank">github</a>
+                    </small>
+
+                    <div>
+                        <div class="file-upload form-control-centered">
+                            <div class="file-select">
+                                <label class="file-select-button" id="fajlName" for="filename_csv">Load csv:</label>
+                                <div class="file-select-name" id="noFile">No file chosen...</div>
+                                <input type="file" name="filename_csv" id="filename_csv">
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div id="simulation">
+                        <button class="btn btn-default btn-lg" id="startSimulation">Start Simulation</button>
+                        <button class="btn btn-default btn-lg" disabled="true" id="stopSimulation">Stop Simulation</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div id="myChartPanel">
+                    <canvas id="myChart" height="400px"></canvas>
+                </div>
             </div>
         </div>
     </div><!--container -->
