@@ -242,6 +242,26 @@ $(document).ready(function(){
     }
   });
 
+  $("#pushDataTemplate").click(function(e){
+    clearMessages();
+    e.preventDefault();
+    var resource = $('#resource').val();
+    var template = $('#template').val();
+    try {
+      var data = JSON.parse($('#data').val());
+      var domain = $('#domain').val();
+      var key = $('#key').val();
+      var password = $('#secret').val();
+      if (key && password && domain) {
+        WAYLAY.pushDataToTemplate(domain, key, password, data, template, successHandler, errorHandler);
+      } else {
+        alert('please add domain and keys');
+      }
+    }catch(e){
+      errorHandler(e.message);
+    }
+  });
+
   $('#toggleHeader').click(function(e) {
     e.preventDefault();
     $('.toggleHeader').slideToggle('fast');

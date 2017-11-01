@@ -86,7 +86,8 @@
         <div class="row">
             <div class="col-lg-6">
                 <div id="settingsPanel">
-                    <h4>Settings</h4>
+                    <h4>Domain Settings  <a href="" id="downloadSettings"><i class="fa fa-download"></i></a></h4>
+
                     <div>
                         <input style="margin-bottom: 5px;" placeholder="Domain:" type="text" id="domain" name="domain" class="form-control form-control-centered">
                     </div>
@@ -104,36 +105,43 @@
                             <input type="file" name="filename_json" id="filename_json">
                         </div>
                     </div>
-
-                    <a href="" class="btn btn-default" id="downloadSettings"><i class="fa fa-download"></i> Download settings</a>
-                    <br/>
-                    <br/>
+                    <hr>
+                    <div class="row">
+                        <button class="btn btn-default btn-lg" id="pushDomain">Push Data to Broker</button>
+                        <button class="btn btn-default btn-lg" id="pushDataTemplate">Push Data to Template</button>
+                    </div>
 
                 </div>
             </div>
             <div class="col-lg-6">
                 <div>
-                    <h4>Resource</h4>
-                    <input style="margin-bottom: 5px;" type="text" id="resource" placeholder="testresource" name="resource" class="form-control form-control-centered" value="testresource"/>
+                    <h4>Resource/Template settings</h4>
+                    <input style="margin-bottom: 5px;" type="text" id="resource" placeholder="comma separated list of resources" name="resource" class="form-control form-control-centered" value="testresource"/>
+                </div>
+                <div>
+                    <input style="margin-bottom: 5px;" type="text" id="template" placeholder="template" name="template" class="form-control form-control-centered" value=""/>
                 </div>
 
                 <div id="measurementPanel">
-                    <h4>Single measurement</h4>
+                    <h5>Single measurement</h5>
                     <div>
-                        <textarea class="form-control form-control-centered" id="data" name="data">{ "temperature" : 23}</textarea>
+                        <textarea rows="5" class="form-control form-control-centered" id="data" name="data">
+{
+    "temperature": 23, 
+    "humidity": 89
+}                       </textarea>
                     </div>
                     <br>
 
                     <div>
-                        <input type="checkbox" name="toStore" id="toStore" checked>Should store data?</input>
-                        <input type="checkbox" name="addRandomness" id="random">Should add randomness?</input><br>
-                        <button class="btn btn-default btn-lg" id="pushDomain">Push Data</button>
+                        <input type="checkbox" name="toStore" id="toStore" checked>&nbsp;Store data &nbsp;&nbsp;</input>
+                        <input type="checkbox" name="addRandomness" id="random">&nbsp;Add randomness &nbsp;</input>
                     </div>
-                    <p class="text-danger" id="error"></p>
-                    <p class="text-info" id="info"></p>
                 </div>
             </div>
-        </div>
+        <p class="text-danger" id="error"></p>
+        <p class="text-info" id="info"></p>
+        </div> <!--row-->
         <hr>
         <div class="row">
             <div class="col-lg-12">

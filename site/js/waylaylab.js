@@ -190,6 +190,32 @@ if (!window.WAYLAY) {
           }
         }
       });
+    },
+    pushDataToTemplate: function(domain, user, pass, data, template, onSuccess, onError) {
+      $.ajax({
+        type: "POST",
+        url: "https://"+domain+"/api/templates/" + template+"/run",
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          "Authorization": "Basic " + btoa(user + ":" + pass)
+        },
+        data: JSON.stringify(data),
+        dataType: "json",
+        success: function(data) {
+          console.log(data.message);
+          if(onSuccess){
+            onSuccess(data.message);
+          }
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+          console.log(jqXHR);
+          if(onError) {
+            onError(jqXHR.responseText);
+          }
+        }
+      });
     }
+
   }
 }
