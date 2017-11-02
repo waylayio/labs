@@ -350,6 +350,8 @@ $(document).ready(function(){
       if(simulationData.length > 0 && template){
         var data = [];
         simulationData.forEach(function(d) {
+          if(d.resource === undefined)
+            d.resource = resource
           data.push([d])
         });
         var dataToSend = {
