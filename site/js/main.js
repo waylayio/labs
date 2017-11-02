@@ -362,7 +362,10 @@ $(document).ready(function(){
             executeActuators: false
           }
         }
-        WAYLAY.pushDataToTemplate(domain, key, password, dataToSend, template, successHandler, errorHandler);
+        $("#info").text("starting batch operation:")
+        WAYLAY.pushDataToTemplate(domain, key, password, dataToSend, template, function(info){
+          $("#info").text(".");
+        }, errorHandler);
       } else {
           alert("no data or no template selected");
       }
