@@ -201,7 +201,6 @@ if (!window.WAYLAY) {
           "Authorization": "Basic " + btoa(user + ":" + pass)
         },
         data: JSON.stringify(data),
-        dataType: "json",
         success: function(data) {
           console.log(data.message);
           if(onSuccess){
