@@ -196,7 +196,6 @@ if (!window.WAYLAY) {
         type: "POST",
         url: "https://"+domain+"/api/templates/" + template+"/run",
         headers: {
-          'Accept': 'application/json',
           'Content-Type': 'application/json',
           "Authorization": "Basic " + btoa(user + ":" + pass)
         },
