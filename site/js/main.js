@@ -363,8 +363,11 @@ $(document).ready(function(){
           }
         }
         $("#info").text("starting batch operation:")
+        var start = new Date().getTime();
         WAYLAY.pushDataToTemplate(domain, key, password, dataToSend, template, function(info){
-          $("#info").text(".");
+          var end = new Date().getTime();
+          var time = end - start;
+          $("#info").text("DONE!" + ', Execution time: ' + time);
         }, errorHandler);
       } else {
           alert("no data or no template selected");
