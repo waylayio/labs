@@ -352,12 +352,15 @@ $(document).ready(function(){
         simulationData.forEach(function(d) {
           data.push([d])
         });
-        data.conf = {
-          parallel : false,
-          resource: resource,
-          executeActuators: false
+        var dataToSend = {
+          data: data,
+          conf : {
+            parallel : false,
+            resource: resource,
+            executeActuators: false
+          }
         }
-        WAYLAY.pushDataToTemplate(domain, key, password, data, template, successHandler, errorHandler);
+        WAYLAY.pushDataToTemplate(domain, key, password, dataToSend, template, successHandler, errorHandler);
       } else {
           alert("no data or no template selected");
       }
