@@ -96,6 +96,7 @@ var changeSettings = function(){
     key: key,
     secret: secret
   }
+  localStorage.setItem('_labs_settings', JSON.stringify(settings));
   var settingJson = JSON.stringify(settings, null, 2)
   var blob = new Blob([settingJson], {type: 'application/json'})
   var url = window.URL.createObjectURL(blob)
@@ -337,6 +338,32 @@ $(document).ready(function(){
       $('#myChartPanel').hide();
   });
 
+
+  $("#sendBatch").click(function(e){
+    e.preventDefault();
+    var resource = $('#resource').val();
+    var domain = $('#domain').val();
+    var key = $('#key').val();
+    var password = $('#secret').val();
+    if(key && password && domain){
+      if(simulationData.length > 0){
+        var data = [];
+        simulationData.forEach(function(d) {
+          data.push([d])
+        });
+        data.conf = {
+          parallel : false,
+          resource: resource,
+          executeActuators: false
+        }
+        WAYLAY.pushDataToTemplate(domain, key, password, data, template, successHandler, errorHandler);
+      } else {
+          alert("no data");
+      }
+    } else {
+      alert("please add domain and keys");
+    }
+  });
   var loadTimeSeries = function(metric, data) {
     nv.addGraph(function() {
       var width = 900, height = 400;

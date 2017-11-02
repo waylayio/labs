@@ -145,7 +145,7 @@
         <hr>
         <div class="row">
             <div class="col-lg-12">
-                <h4>Multiple measurements</h4>
+                <h4><i class="fa fa-bar-chart" aria-hidden="true"></i> Simulation data</h4>
                 <div id="simulationSettings">
                     <div id="table">
                         <div id="datatable"></div>
@@ -175,6 +175,7 @@
                     <div id="simulation">
                         <button class="btn btn-default btn-lg" id="startSimulation">Start Simulation</button>
                         <button class="btn btn-default btn-lg" disabled="true" id="stopSimulation">Stop Simulation</button>
+                        <button class="btn btn-default btn-lg" id="sendBatch">Template Batch</button>
                     </div>
                 </div>
             </div>
@@ -335,6 +336,12 @@
     ga('create', 'UA-50877508-3', 'auto');
     ga('send', 'pageview');
 
+</script>
+<script>
+var settings = JSON.parse(localStorage.getItem('_labs_settings'));
+$('#domain').val(settings.domain);
+$('#key').val(settings.key);
+$('#secret').val(settings.secret);
 </script>
 
 
