@@ -209,7 +209,7 @@ if (!window.WAYLAY) {
           }
         },
         error: function(jqXHR, textStatus, errorThrown) {
-          var error = errorThrown && errorThrown.mesage ? errorThrown.mesage: jqXHR.responseText
+          var error = errorThrown.mesage ? errorThrown.mesage: jqXHR.responseText
           console.log(error);
           if(onError) {
             onError(error);
