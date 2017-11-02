@@ -209,9 +209,10 @@ if (!window.WAYLAY) {
           }
         },
         error: function(jqXHR, textStatus, errorThrown) {
-          console.log(jqXHR);
+          var error = errorThrown && errorThrown.mesage ? errorThrown.mesage: jqXHR.responseText
+          console.log(error);
           if(onError) {
-            onError(jqXHR.responseText);
+            onError(error);
           }
         }
       });
