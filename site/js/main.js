@@ -342,11 +342,12 @@ $(document).ready(function(){
   $("#sendBatch").click(function(e){
     e.preventDefault();
     var resource = $('#resource').val();
+    var template = $('#template').val();
     var domain = $('#domain').val();
     var key = $('#key').val();
     var password = $('#secret').val();
     if(key && password && domain){
-      if(simulationData.length > 0){
+      if(simulationData.length > 0 && template){
         var data = [];
         simulationData.forEach(function(d) {
           data.push([d])
@@ -358,7 +359,7 @@ $(document).ready(function(){
         }
         WAYLAY.pushDataToTemplate(domain, key, password, data, template, successHandler, errorHandler);
       } else {
-          alert("no data");
+          alert("no data or no template selected");
       }
     } else {
       alert("please add domain and keys");
