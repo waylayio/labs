@@ -250,11 +250,21 @@ $(document).ready(function(){
     var template = $('#template').val();
     try {
       var data = JSON.parse($('#data').val());
+      if(data.resource === undefined)
+        data.resource = resource
+      var dataToSend = {
+          data: [[data]],
+          conf : {
+            parallel : false,
+            resource: resource,
+            executeActuators: true
+          }
+        }
       var domain = $('#domain').val();
       var key = $('#key').val();
       var password = $('#secret').val();
       if (key && password && domain) {
-        WAYLAY.pushDataToTemplate(domain, key, password, data, template, successHandler, errorHandler);
+        WAYLAY.pushDataToTemplate(domain, key, password, dataToSend, template, successHandler, errorHandler);
       } else {
         alert('please add domain and keys');
       }
