@@ -202,9 +202,9 @@ if (!window.WAYLAY) {
         data: JSON.stringify(data),
         dataType: "text",
         success: function(data) {
-          console.log(data.message);
+          console.log(data);
           if(onSuccess){
-            onSuccess(data.message);
+            onSuccess(data);
           }
         },
         error: function(jqXHR, textStatus, errorThrown) {
