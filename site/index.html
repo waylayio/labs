@@ -21,6 +21,8 @@
     <link href="http://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
     <link href="http://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css">
     <link href="https://cdn.rawgit.com/novus/nvd3/v1.8.1/build/nv.d3.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="css/jquery.toast.min.css" rel="stylesheet">
 </head>
 
 <body id="page-top" class="index">
@@ -49,13 +51,10 @@
                     <a href="#runsimulation">Simulation</a>
                 </li>
                 <li class="page-scroll">
-                    <a href="#chats">Charts</a>
-                </li>
-                <li class="page-scroll">
-                    <a href="#freeboard">Freeboard</a>
-                </li>
-                <li class="page-scroll">
                     <a href="#github">Data</a>
+                </li>
+                <li>
+                    <a><i id="settings" data-toggle="modal" data-target="#exampleModal" class="material-icons">settings</i></a>
                 </li>
             </ul>
         </div>
@@ -64,87 +63,55 @@
     <!-- /.container-fluid -->
 </nav>
 
-<!-- Header -->
-<header>
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-12">
-                <img class="img-responsive" src="img/profile2.png" alt="" style="max-height: 150px">
-                <div class="intro-text">
-                    <span class="name">Waylay lab</span>
-                </div>
-            </div>
-        </div>
-    </div>
-</header>
-
-<section id="runsimulation" class="container content-section text-center">
-    <div class="container">
+<section id="runsimulation" class="container content-section text-center">  
         <h2>Simulator</h2>
+        <br>
         <div class="row">
-            <div class="col-lg-6">
+            <div class="col col-lg-6">
+                    <div>
+                        <h4>Resource/Template settings</h4>
+                        <input style="margin-bottom: 5px;" type="text" id="resource" placeholder="comma separated list of resources" name="resource" class="form-control form-control-centered" value="testresource"/>
+                    </div>
+                    <div>
+                        <input style="margin-bottom: 5px;" type="text" id="template" placeholder="template" name="template" class="form-control form-control-centered autocomplete" data-toggle="tooltip" data-placement="top" title="Required if you want to push data to the template" />
+                    </div>
+            </div>
+            <div class="col col-lg-6">
+                    <div id="measurementPanel">
+                        <h4>Single measurement</h4>
+                        <div>
+                            <textarea rows="6" class="form-control form-control-centered" id="data" name="data">
+    {
+        "temperature": 23, 
+        "humidity": 89,
+        "longitude": 4.1, 
+        "latitude": 51.2
+    }</textarea>
+                        </div>
+                        <br>
+
+                        
+                    </div>
+            </div>
+        </div> <!--row-->
+        <div class="row">
                 <div id="settingsPanel">
-                    <h4>Domain Settings  <a href="" id="downloadSettings"><i data-toggle="tooltip" data-placement="top" title="Store settings file localy" class="fa fa-download"></i></a></h4>
-
-                    <div>
-                        <input style="margin-bottom: 5px;" placeholder="Domain:" type="text" id="domain" name="domain" class="form-control form-control-centered">
-                    </div>
-                    <div>
-                        <input style="margin-bottom: 5px;" placeholder="API key:" type="password" id="key" name="key" class="form-control form-control-centered"/>
-                    </div>
-                    <div>
-                        <input style="margin-bottom: 5px;" type="password" placeholder="API secret:" id="secret" name="secret" class="form-control form-control-centered"/>
-                    </div>
-
-                    <div class="file-upload form-control-centered">
-                        <div class="file-select">
-                            <label class="file-select-button" id="fajlName2" for="filename_json">Load settings json:</label>
-                            <div class="file-select-name" id="noFile2">No file chosen...</div>
-                            <input type="file" name="filename_json" id="filename_json">
+                        <div>
+                            <input type="checkbox" name="toStore" id="toStore" checked data-toggle="tooltip" data-placement="top" title="Store values in the database, or only forward data to the engine">&nbsp;Store data &nbsp;&nbsp;</input>
+                            <input type="checkbox" name="addRandomness" id="random" data-toggle="tooltip" data-placement="top" title="Slightly change the input data arround configured values">&nbsp;Add randomness &nbsp;</input>
+                        </div>
+                        <div>
+                            <button class="btn btn-default btn-lg" id="pushDomain" data-toggle="tooltip" data-placement="top" title="Single measurement is pushed as a stream event to the broker">Push Data to Broker</button>
+                            <button class="btn btn-default btn-lg" id="pushDataTemplate" data-toggle="tooltip" data-placement="top" title="Single measurement is pushed to the template">Push Data to Template</button>
                         </div>
                     </div>
-                    <hr>
-                    <div class="row">
-                        <button class="btn btn-default btn-lg" id="pushDomain" data-toggle="tooltip" data-placement="top" title="Single measurement is pushed as a stream event to the broker">Push Data to Broker</button>
-                        <button class="btn btn-default btn-lg" id="pushDataTemplate" data-toggle="tooltip" data-placement="top" title="Single measurement is pushed to the template">Push Data to Template</button>
-                    </div>
+                    <div id="output">
 
-                </div>
-            </div>
-            <div class="col-lg-6">
-                <div>
-                    <h4>Resource/Template settings</h4>
-                    <input style="margin-bottom: 5px;" type="text" id="resource" placeholder="comma separated list of resources" name="resource" class="form-control form-control-centered" value="testresource"/>
-                </div>
-                <div>
-                    <input style="margin-bottom: 5px;" type="text" id="template" placeholder="template" name="template" class="form-control form-control-centered" value="" data-toggle="tooltip" data-placement="top" title="Required if you want to push data to the template" />
-                </div>
-
-                <div id="measurementPanel">
-                    <h5>Single measurement</h5>
-                    <div>
-                        <textarea rows="6" class="form-control form-control-centered" id="data" name="data">
-{
-    "temperature": 23, 
-    "humidity": 89,
-    "longitude": 4.1, 
-    "latitude": 51.2
-}                       </textarea>
                     </div>
-                    <br>
-
-                    <div>
-                        <input type="checkbox" name="toStore" id="toStore" checked data-toggle="tooltip" data-placement="top" title="Store values in the database, or only forward data to the engine">&nbsp;Store data &nbsp;&nbsp;</input>
-                        <input type="checkbox" name="addRandomness" id="random" data-toggle="tooltip" data-placement="top" title="Slightly change the input data arround configured values">&nbsp;Add randomness &nbsp;</input>
-                    </div>
-                </div>
-            </div>
-        <p class="text-danger" id="error"></p>
-        <p class="text-info" id="info"></p>
-        </div> <!--row-->
+        </div>
         <hr>
         <div class="row">
-            <div class="col-lg-12">
+            <div class="col-lg-8 col-lg-offset-2">
                 <h4 data-toggle="tooltip" data-placement="top" title="Load file to simulate real time stream events"><i class="fa fa-bar-chart" aria-hidden="true"></i> Simulation data</h4>
                 <div id="simulationSettings">
                     <div id="table">
@@ -174,91 +141,33 @@
 
                     <div id="simulation">
                         <button class="btn btn-default btn-lg" id="startSimulation">Start Simulation</button>
-                        <button class="btn btn-default btn-lg" disabled="true" id="stopSimulation">Stop Simulation</button>
-                        <button class="btn btn-default btn-lg" id="sendBatch">Template Batch</button>
+                        <button class="btn btn-default btn-lg" disabled="true" id="stopSimulation">Stop Simulation</button> 
                     </div>
+        
                 </div>
             </div>
         </div>
+        <div class="row" id="batchsimulation">
+         <div class="col-lg-8 col-lg-offset-2">
+            <button class="btn btn-default btn-lg" id="sendBatch">Template Batch</button>
+            <div>
+                <input type="checkbox" name="parallel" id="parallel" checked data-toggle="tooltip" data-placement="top" title="When set to true this will make processing faster as we will handle multiple batches at the same time.">&nbsp;Run in parallel &nbsp;&nbsp;</input>
+                <input type="checkbox" name="executeActuators" id="executeActuators" data-toggle="tooltip" data-placement="top" title="This activates the actuators">&nbsp;Execute Actuators &nbsp;</input>
+            </div>
+         </div>
+        </div>
+        <div class="col-lg-8 col-lg-offset-2">
+            <div class="row" id="batchoutput">
+
+            </div>
+        </div>
         <div class="row">
-            <div class="col-lg-12">
+            <div class="col-lg-8 col-lg-offset-2">
                 <div id="myChartPanel">
                     <canvas id="myChart" height="400px"></canvas>
                 </div>
             </div>
         </div>
-    </div><!--container -->
-</section>
-
-<!-- Websocket -->
-<section id="chart" class="content-section text-center">
-    <div class="container">
-        <h2>Websocket</h2>
-        <div class="col-lg-10 col-lg-offset-1">
-            <pre id="websocketData" class="text-left">Websocket Data</pre>
-            <div id="websocketChart1"></div>
-            <div id="websocketChart2"></div>
-            <div id="websocketChart3"></div>
-            <div id="websocketChart4"></div>
-            <div id="websocketChart5"></div>
-        </div>
-    </div>
-</section>
-
-<section id="cloudCache" class="content-section text-center">
-    <div class="container">
-        <h2>Cloud Cache</h2>
-        <div class="col-lg-10 col-lg-offset-1">
-            <pre id="latestObject" class="text-left">Latest Object</pre>
-        </div>
-        <div>
-            <button class="btn btn-default btn-lg" id="getLatestObject">Get Latest Object</button>
-        </div>
-        <hr>
-        <div class="col-lg-10 col-lg-offset-1">
-            <pre id="allObjects" class="text-left" style="overflow: auto;height: 200px;">All Objects</pre>
-        </div>
-        <div>
-            <button class="btn btn-default btn-lg" id="getAllObjects">Get All Objects</button>
-        </div>
-    </div>
-</section>
-
-
-<!-- Charts -->
-<section id="chart" class="content-section text-center">
-    <div class="container">
-        <h2>Times Series Database</h2>
-        <div>
-            <button class="btn btn-default btn-lg" id="getSeriesData">Plot Data</button>
-        </div>
-        <div class="col-lg-10 col-lg-offset-1">
-            <div id="seriesChart">
-            </div>
-        </div>
-    </div>
-</section>
-
-
-<!-- Freeboard -->
-<section id="freeboard" class="dashboard content-section text-center">
-    <div class="container">
-
-        <h2>Dashboard</h2>
-        <p>Read data from Cloud Persisted Cache</p>
-        <hr class="star-dash">
-        <a href="#" id="toggleHeader">Toggle Settings </a><i class="fa fa-info-circle" data-toggle="tooltip" data-placement="right" title="Datasource configuration"></i><br />
-        <div id="toggleSettings" class="toggleHeader">
-            <div id="endpoint"></div>
-            <div id="headerendpoint"></div>
-        </div>
-        <div class="row">
-            <iframe src="freeboard/index.html" width="100%" height="800px" class="myIframe">
-                <p> display</p>
-            </iframe>
-        </div>
-
-    </div>
 </section>
 
 <!-- Github -->
@@ -299,7 +208,9 @@
 
 <!-- jQuery -->
 <script src="js/jquery.js"></script>
-
+<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
+<script src="js/jquery.toast.min.js"></script>
 <!-- Bootstrap Core JavaScript -->
 <script src="js/bootstrap.min.js"></script>
 <script type="text/javascript" src="js/underscore-min.js"></script>
@@ -346,7 +257,42 @@ $('#domain').val(settings.domain);
 $('#key').val(settings.key);
 $('#secret').val(settings.secret);
 </script>
+  
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" >
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Settings</h5>
+        </div>
+        <div class="modal-body">
+            <h4>Domain Settings  <a href="" id="downloadSettings"><i data-toggle="tooltip" data-placement="top" title="Store settings file localy" class="fa fa-download"></i></a></h4>
 
+            <div>
+                <input style="margin-bottom: 5px;" placeholder="Domain:" type="text" id="domain" name="domain" class="form-control form-control-centered">
+            </div>
+            <div>
+                <input style="margin-bottom: 5px;" placeholder="API key:" type="password" id="key" name="key" class="form-control form-control-centered"/>
+            </div>
+            <div>
+                <input style="margin-bottom: 5px;" type="password" placeholder="API secret:" id="secret" name="secret" class="form-control form-control-centered"/>
+            </div>
+
+            <div class="file-upload form-control-centered">
+                <div class="file-select">
+                    <label class="file-select-button" id="fajlName2" for="filename_json">Load settings json:</label>
+                    <div class="file-select-name" id="noFile2">No file chosen...</div>
+                    <input type="file" name="filename_json" id="filename_json">
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" data-dismiss="modal" id="save">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
 </body>
 

@@ -283,6 +283,52 @@ header .intro-text .skills {
     font-weight: 300;
 }
 
+#runsimulation {
+    margin-top: 25px;
+    background-color: rgb(247, 247, 247);
+}
+
+#settingsPanel {
+    padding-bottom: 5px;
+    padding-top: 5px;
+}
+
+#batchsimulation {
+    padding: 20px 20px 20px 20px;
+}
+
+#batchsimulation button {
+    background-color: #40C4AA;
+    border: none;
+    padding: 10px 10px 10px 10px;
+}
+
+#simulation {
+    padding: 20px 20px 20px 20px;
+}
+
+#simulation button {
+    background-color: #40C4AA;
+    border: none;
+    padding: 10px 10px 10px 10px;
+}
+
+#info {
+    width: 300px;
+    height: 150px;
+}
+
+#infobatch {
+    width: 500px;
+    height: 35px;
+}
+
+#settingsPanel button {
+    background-color: #40C4AA;
+    border: none;
+    padding: 10px 10px 10px 10px;
+}
+
 @media(min-width:768px) {
     header .container {
         padding-top: 200px;
